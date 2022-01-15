@@ -1,2 +1,6 @@
 perfil
 .ipynb*
+chromedriver
+output
+__pycache__
+.env
