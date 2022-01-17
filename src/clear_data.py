@@ -3,8 +3,8 @@ import json_read_write
 def subsections(new_animes):
     new_animes["Languages"] = {}
     new_animes["Studio"] = {}
-    new_animes["style"] = {}
-    new_animes["assessment"] = {}
+    new_animes["Style"] = {}
+    new_animes["Assessment"] = {}
 
     def fors(tags_for_anime, tag):
         for tags in new_animes:
