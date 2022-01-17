@@ -35,8 +35,8 @@ pathlib.Path('output/user').mkdir(exist_ok=True)
 # USERNAME = "Abajur"
 # USERNAME = "MarcosInja"
 
-# Pega a pagina do principal do usuario,
-# a pagina de amigos e a pagina de animes 
+# Get the user's main page,
+# the friends page and the anime page
 def url_format(url_part_name, opc):
     """Set the URL type
     0 - user
@@ -56,7 +56,7 @@ def url_format(url_part_name, opc):
     return url_format
 
 
-# Pega uma pagina para ser raspada
+# Get a page to be scraped
 def get_page_user_friend_anime(url_format):
     page_source = requests.get(url_format)
     soup = BeautifulSoup(page_source.text, 'html.parser')
@@ -64,7 +64,7 @@ def get_page_user_friend_anime(url_format):
     return soup
 
 
-# Configura o selenium
+# Configure selenium
 def setup_driver():
     # Seting the directorys to be used by selenium
     current_directory = os.getcwd()
@@ -80,7 +80,7 @@ def setup_driver():
     return webdriver.Chrome(executable_path = path_chrome, chrome_options = chrome_options)
 
 
-# Pega as informações do usuario
+# Get the user information
 def user_info(soup):
     user_status = soup.find(class_ = 'user-status').find_all("li")
     info = []
@@ -91,7 +91,7 @@ def user_info(soup):
     return info
 
 
-# Pega os amigos do usuario
+# Get the user's friends
 def user_friends(soup):
     info = []
     try:
@@ -105,7 +105,7 @@ def user_friends(soup):
     return info
 
 
-# Pega os nomes e os links de cada anime
+# Get the names and links of each anime
 def user_anime(url):
     data = []
     browser = setup_driver()
@@ -114,17 +114,17 @@ def user_anime(url):
     time.sleep(1)
 
     SCROLL_PAUSE_TIME = 4
-    # Pega a altura da rolagem
+    # Get the scroll height
     last_height = browser.execute_script("return document.body.scrollHeight")
 
     while True:
-        # Rola para baixo
+        # scroll down
         browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-        # Espera a pagina carregar
+        # Wait for the page to load
         time.sleep(SCROLL_PAUSE_TIME)
 
-        # Calcule a nova altura de rolagem e compare com a última altura de rolagem
+        # Calculate new scroll height and compare with last scroll height
         new_height = browser.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
             break
@@ -141,7 +141,7 @@ def user_anime(url):
     return data
 
 
-# Pega os dados brutos dos animes faz a limpeza e os salva em um json
+# Get the raw data from the anime, clean it and save it in a json
 def anime_data(animes):
     data = {}
     file_names = []
@@ -159,12 +159,12 @@ def anime_data(animes):
 
             json_read_write.write_json(f"output/anime/{anime[0].replace('/', ' ')}.json", data[anime[0]])
     
-    # Limpa os dados
+    # Clear the data
     clear_data.saned_anime_data(file_names)
     return file_names
 
 
-# Pega as informações dos amigos do usuario
+# Get the information of the user's friends
 def friends_data(friends):
     # data =[]
     if friends:
@@ -192,7 +192,7 @@ def main(user):
     soup = get_page_user_friend_anime(url_format(user, 1))
     friends = user_friends(soup)
 
-    # Pega as informações do anime
+    # Get the anime information
     anime = user_anime(url_format(user, 2))
     file_names = anime_data(anime)
 
