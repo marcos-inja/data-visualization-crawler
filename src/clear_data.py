@@ -1,5 +1,33 @@
 import json_read_write
 
+def subsections(new_animes):
+    new_animes["Languages"] = {}
+    new_animes["Studio"] = {}
+    new_animes["style"] = {}
+    new_animes["assessment"] = {}
+
+    def fors(tags_for_anime, tag):
+        for tags in new_animes:
+            if tags in tags_for_anime:
+                new_animes[tag][tags] = new_animes[tags]
+        [new_animes.pop(key, None) for key in tags_for_anime]
+
+    
+    tags_for_anime = ['Japanese', 'English', 'German', 'Spanish', 'French']
+    fors(tags_for_anime, "Languages")
+    
+    tags_for_anime = ['Broadcast', 'Producers', 'Licensors', 'Studios']
+    fors(tags_for_anime, "Studio")
+
+    tags_for_anime = ['Genres', 'Themes', 'Demographic', 'Theme', 'Genre']
+    fors(tags_for_anime, "style")
+
+    tags_for_anime = ['Score', 'Ranked', 'Popularity']
+    fors(tags_for_anime, "assessment")
+
+    return new_animes
+
+
 def saned_anime_data(file_names):
     """ Cleaning anime data
     Open the json with the raw data and put it
@@ -27,32 +55,10 @@ def saned_anime_data(file_names):
                 if new_animes[tags] not in ['Unknown', 'N/A']:
                     new_animes[tags] = float(new_animes[tags])
         
-        # Subsections
-        new_animes["Languages"] = {}
-        new_animes["Studio"] = {}
-        new_animes["style"] = {}
-        new_animes["assessment"] = {}
+        # Adding subsections
+        animes = subsections(new_animes)
 
-        def fors(tags_for_anime, tag):
-            for tags in new_animes:
-                if tags in tags_for_anime:
-                    new_animes[tag][tags] = new_animes[tags]
-            [new_animes.pop(key, None) for key in tags_for_anime]
-
-        
-        tags_for_anime = ['Japanese', 'English', 'German', 'Spanish', 'French']
-        fors(tags_for_anime, "Languages")
-        
-        tags_for_anime = ['Broadcast', 'Producers', 'Licensors', 'Studios']
-        fors(tags_for_anime, "Studio")
-
-        tags_for_anime = ['Genres', 'Themes', 'Demographic', 'Theme', 'Genre']
-        fors(tags_for_anime, "style")
-
-        tags_for_anime = ['Score', 'Ranked', 'Popularity']
-        fors(tags_for_anime, "assessment")
-
-        json_read_write.write_json(file, new_animes)
+        json_read_write.write_json(file, animes)
 
 
 def user_info(info, user, animes, friends):
@@ -72,6 +78,3 @@ def user_info(info, user, animes, friends):
     file_name = f'output/user/{user}.json'
     json_read_write.write_json(file_name, data_user)
     return file_name
-
-
-# saned_anime_data(['json_example/anime.json'])
