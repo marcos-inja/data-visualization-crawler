@@ -166,7 +166,6 @@ def anime_data(animes):
 
 # Get the information of the user's friends
 def friends_data(friends):
-    # data =[]
     if friends:
         for f in friends:
             soup = get_page_user_friend_anime(url_format(f, 0))
@@ -179,8 +178,6 @@ def friends_data(friends):
             file_names = anime_data(anime)
 
             file = clear_data.user_info(infos_user, f, anime, friends)
-
-    # return data
 
 
 def main(user):
