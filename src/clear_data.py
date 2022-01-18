@@ -20,10 +20,10 @@ def subsections(new_animes):
     fors(tags_for_anime, "Studio")
 
     tags_for_anime = ['Genres', 'Themes', 'Demographic', 'Theme', 'Genre']
-    fors(tags_for_anime, "style")
+    fors(tags_for_anime, "Style")
 
     tags_for_anime = ['Score', 'Ranked', 'Popularity']
-    fors(tags_for_anime, "assessment")
+    fors(tags_for_anime, "Assessment")
 
     return new_animes
 
