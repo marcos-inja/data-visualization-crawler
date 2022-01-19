@@ -1,10 +1,10 @@
 import json_read_write
 
 def subsections(new_animes):
-    new_animes["Languages"] = {}
-    new_animes["Studio"] = {}
-    new_animes["Style"] = {}
     new_animes["Assessment"] = {}
+    new_animes["Style"] = {}
+    new_animes["Studio"] = {}
+    new_animes["Titles"] = {}
 
     def fors(tags_for_anime, tag):
         for tags in new_animes:
@@ -12,9 +12,8 @@ def subsections(new_animes):
                 new_animes[tag][tags] = new_animes[tags]
         [new_animes.pop(key, None) for key in tags_for_anime]
 
-    
     tags_for_anime = ['Japanese', 'English', 'German', 'Spanish', 'French']
-    fors(tags_for_anime, "Languages")
+    fors(tags_for_anime, "Titles")
     
     tags_for_anime = ['Broadcast', 'Producers', 'Licensors', 'Studios']
     fors(tags_for_anime, "Studio")
@@ -36,15 +35,25 @@ def saned_anime_data(file_names):
     for file in file_names:
         anime = json_read_write.read_json(file)
         new_animes = {}
+        new_animes['Name'] = file.split(sep='/')[2].split(sep='.')[0]
 
         for data in anime:
             new_anime = []
             for tag in data:
-                tag = str(tag).replace('\n', '').strip() # Remove os \n e espaço vázios
+                tag = str(tag).replace('\n', '').strip() # Remove the \n and empty space
                 new_anime.append(tag)
 
-            tags_not_n = [a for a in new_anime if a not in ['',',','.']] # Ignora os itens com esses dados
-            new_animes[tags_not_n[0].replace(':', '')] = tags_not_n[1].replace('#', '') # Remove o "#" do rank
+            tags_not_n = [a for a in new_anime if a not in ['',',','.']] # Ignore items with this data
+
+            index = tags_not_n[0].replace(':', '')
+            if index in ["Themes","Genres", "Theme", "Genre"]:
+                new_animes[index] = []
+
+                for i in tags_not_n[1::2]:
+                    new_animes[index].append(i)
+
+            else:
+                new_animes[index] = tags_not_n[1].replace('#', '') # Remove the "#" from the rank
 
         # Transform some data into int and float
         for tags in new_animes:
@@ -65,15 +74,16 @@ def user_info(info, user, animes, friends):
     """Merge user information
     """
     data_user = {}
-    data_user["anime"] = []
-    data_user["name"] = user
+    data_user["Name"] = user
+
     for i in info:
         data_user[i[0]] = i[1]
-    
+
+    data_user["Friends"] = friends
+
+    data_user["Anime_list"] = []
     for anime in animes:
-        data_user["anime"].append(anime[0])
-    
-    data_user["friends"] = friends
+        data_user["Anime_list"].append(anime[0])
 
     file_name = f'output/user/{user}.json'
     json_read_write.write_json(file_name, data_user)
