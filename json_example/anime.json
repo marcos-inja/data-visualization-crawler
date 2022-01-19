@@ -1,4 +1,5 @@
 {
+    "Name": "Code Geass: Hangyaku no Lelouch R2",
     "Synonyms": "Code Geass: Hangyaku no Lelouch 2nd Season, Code Geass: Hangyaku no Lelouch Second Season",
     "Type": "TV",
     "Episodes": 25,
@@ -8,9 +9,14 @@
     "Source": "Original",
     "Duration": "24 min. per ep.",
     "Rating": "R - 17+ (violence & profanity)",
-    "Members": 1502695,
-    "Favorites": 68158,
-    "Languages": {
+    "Members": 1503439,
+    "Favorites": 68184,
+    "Assessment": {
+        "Score": 8.91,
+        "Ranked": 18,
+        "Popularity": 46
+    },
+    "Titles": {
         "Japanese": "コードギアス 反逆のルルーシュ 続編",
         "English": "Code Geass: Lelouch of the Rebellion R2",
         "German": "Code Geass: Lelouch of the Rebellion R2",
@@ -23,13 +29,8 @@
         "Licensors": "Funimation",
         "Studios": "Sunrise"
     },
-    "style": {
+    "Style": {
         "Genres": "Action",
         "Themes": "Mecha"
-    },
-    "assessment": {
-        "Score": 8.91,
-        "Ranked": 18,
-        "Popularity": 46
     }
 }
