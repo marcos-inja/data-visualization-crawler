@@ -162,6 +162,9 @@ try:
             Column("name_user", "VARCHAR", nullable=False),
             Column("name_friend", "VARCHAR", nullable=False)) \
             .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
+    # Remove the final parentheses, to be added when editing the string
+    sql = str(sql).replace("))",")")
+    sql = f'{sql}, FOREIGN KEY ("name_friend") REFERENCES "user_info" ("name"))'
     run_sql(str(sql))
 except:
     pass
