@@ -183,10 +183,8 @@ except:
 
 # SQL commands for anime data
 # Execute SQL command according to data passed by parameters
-cont = 0
 for anime in BD_ANIME.find({},{'_id': 0}):
     try:
-        cont += 1
         # Parameters used to build custom inserts for the database
         tags = ['Name', 'Synonyms', 'Type', 'Episodes', 'Status', 'Aired', 'Premiered', 'Source', 'Duration', 'Rating', 'Members', 'Favorites']
         table = 'anime'
@@ -228,8 +226,6 @@ for anime in BD_ANIME.find({},{'_id': 0}):
         with open('log_anime.out', 'a') as log:
             log.write(f'{excep}')
             log.close
-    if cont == 100:
-        break
         
 
 """ Explanation of try except pass quantity
@@ -243,10 +239,8 @@ PYTHÔNICO
 
 # SQL commands for user data
 # Execute SQL command according to data passed by parameters
-cont = 0
 for user in BD_USER.find({},{'_id': 0}):
     try: 
-        cont += 1
         # Parameters used to build custom inserts for the database
         tags = ['Name', 'Last Online', 'Gender', 'Birthday', 'Location', 'Joined']
         table = 'user_info'
@@ -283,6 +277,3 @@ for user in BD_USER.find({},{'_id': 0}):
         with open('log_user.out', 'a') as log:
             log.write(f'{excep}')
             log.close
-    
-    if cont == 2:
-        break
