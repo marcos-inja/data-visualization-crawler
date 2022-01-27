@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import psycopg2
+from pypika import Query, Table, Column
 
 
 load_dotenv()
@@ -21,25 +22,26 @@ DB_USER_P = os.getenv('POSTGRES_USER')
 DB_PASS = os.getenv('POSTGRES_PASSWORD')
 
 
-class BDConect:
-    def __init__(self):
-        """
-        Create conection with data base Postgres
-        """
-        self.conection = psycopg2.connect(dbname=DB_NAME,
-                                          user=DB_USER_P, 
-                                          host=DB_HOST, 
-                                          password=DB_PASS)
+def conection():
+    """
+    create conection with data base Postgres
+    """
+    conection = psycopg2.connect(dbname=DB_NAME,
+                                 user=DB_USER_P, 
+                                 host=DB_HOST, 
+                                 password=DB_PASS)
+    return conection
 
 
-    def run_sql(self, sql):
-        """
-        Running commands sql
-        """
-        cur = self.conection.cursor()
-        cur.execute(sql)
-        self.conection.commit()
-        self.conection.close()
+def run_sql(sql):
+    """
+    Running commands sql
+    """
+    conn = conection()
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    conn.close()
 
 
 def constructor_querry(entry, tags, table):
@@ -104,72 +106,124 @@ def update_querry(entry, tags, table, key_anime, char=False):
         return sql
 
 
-BD = BDConect()
-
-
-# Try to create the database tables
 try:
-    sql = "CREATE TABLE user_info (name VARCHAR PRIMARY KEY, gender VARCHAR, location VARCHAR, joined VARCHAR, last_online VARCHAR, birthday VARCHAR);"
-    BD.run_sql(sql)
-    sql = "CREATE TABLE anime_view (id SERIAL PRIMARY KEY, name_user VARCHAR, name_anime VARCHAR)"
-    BD.run_sql(sql)
-    sql = "CREATE TABLE friendship (id SERIAL PRIMARY KEY, name_user VARCHAR, name_friend VARCHAR)"
-    BD.run_sql(sql)
-    sql = "CREATE TABLE anime (name VARCHAR PRIMARY KEY, synonyms VARCHAR, type VARCHAR, episodes INT, status VARCHAR, aired VARCHAR, premiered VARCHAR, source VARCHAR, duration VARCHAR, rating VARCHAR, members INT, favorites INT, score FLOAT, ranked INT, popularity INT, demographic VARCHAR, japanese VARCHAR, english VARCHAR, french VARCHAR, spanish VARCHAR, german VARCHAR, broadcast VARCHAR, producers VARCHAR, licensors VARCHAR, studios VARCHAR)"
-    BD.run_sql(sql)
+    # creates the table with user information, if it does not exist
+    sql = Query.create_table("user_info").columns(
+            Column("name", "VARCHAR", nullable=False),
+            Column("gender", "VARCHAR", nullable=True),
+            Column("location", "VARCHAR", nullable=True),
+            Column("joined", "VARCHAR", nullable=True),
+            Column("last_online", "VARCHAR", nullable=True),
+            Column("birthday", "VARCHAR")) \
+            .primary_key("name")
+    run_sql(str(sql))
+except:
+    pass
+
+try:
+    # creates the table with user friends, if it does not exist
+    sql = Query.create_table("friendship").columns(
+            Column("id", "SERIAL", nullable=False),
+            Column("name_user", "VARCHAR", nullable=False),
+            Column("name_friend", "VARCHAR", nullable=False)) \
+            .primary_key("id")
+    run_sql(str(sql))
+except:
+    pass
+
+try:
+    # creates the table with user anime information, if it does not exist
+    sql = Query.create_table("anime_view").columns(
+            Column("id", "SERIAL", nullable=False),
+            Column("name_user", "VARCHAR", nullable=False),
+            Column("name_anime", "VARCHAR", nullable=False)) \
+            .primary_key("id")
+    run_sql(str(sql))
+except:
+    pass
+
+try:
+    # creates the table with anime information, if it does not exist
+    sql = Query.create_table("anime").columns(
+            Column("name", "VARCHAR", nullable=False),
+            Column("synonyms", "VARCHAR", nullable=True),
+            Column("type", "VARCHAR", nullable=True),
+            Column("episodes", "INT", nullable=True),
+            Column("status", "VARCHAR", nullable=True),
+            Column("aired", "VARCHAR", nullable=True),
+            Column("premiered", "VARCHAR", nullable=True),
+            Column("source", "VARCHAR", nullable=True),
+            Column("duration", "VARCHAR", nullable=True),
+            Column("rating", "VARCHAR", nullable=True),
+            Column("members", "INT", nullable=True),
+            Column("favorites", "INT", nullable=True),
+            Column("score", "FLOAT", nullable=True),
+            Column("ranked", "INT", nullable=True),
+            Column("popularity", "INT", nullable=True),
+            Column("demographic", "VARCHAR", nullable=True),
+            Column("japanese", "VARCHAR", nullable=True),
+            Column("english", "VARCHAR", nullable=True),
+            Column("french", "VARCHAR", nullable=True),
+            Column("spanish", "VARCHAR", nullable=True),
+            Column("german", "VARCHAR", nullable=True),
+            Column("broadcast", "VARCHAR", nullable=True),
+            Column("producers", "VARCHAR", nullable=True),
+            Column("licensors", "VARCHAR", nullable=True),
+            Column("studios", "VARCHAR", nullable=True)) \
+            .primary_key("name")
+    run_sql(str(sql))
 except:
     pass
 
 
 # SQL commands for anime data
-# execute SQL command according to data passed by parameters
+# Execute SQL command according to data passed by parameters
 cont = 0
 for anime in BD_ANIME.find({},{'_id': 0}):
     try:
         cont += 1
-
         # Parameters used to build custom inserts for the database
         tags = ['Name', 'Synonyms', 'Type', 'Episodes', 'Status', 'Aired', 'Premiered', 'Source', 'Duration', 'Rating', 'Members', 'Favorites']
         table = 'anime'
         sql = constructor_querry(anime, tags, table)
-        print(f"{cont}: {sql}")
-        BD.run_sql(sql)
-        
+
+        run_sql(sql)
+            
         """ -- Used to build custom updates with passed parameters -- """
         tags = ['Score', 'Ranked', 'Popularity']
         table = 'anime'
         key_anime = anime['Name']
         sql = update_querry(anime['Assessment'], tags, table, key_anime)
-        print(f"{cont}: {sql}")
-        BD.run_sql(sql)
+
+        run_sql(sql)
 
         tags = ['Demographic']
         table = 'anime'
         key_anime = anime['Name']
         sql = update_querry(anime['Style'], tags, table, key_anime, True)
-        print(f"{cont}: {sql}")
-        BD.run_sql(sql)
+
+        run_sql(sql)
 
         tags = ['Broadcast', 'Producers', 'Licensors', 'Studios']
         table = 'anime'
         key_anime = anime['Name']
         sql = update_querry(anime['Studio'], tags, table, key_anime, True)
-        print(f"{cont}: {sql}")
-        BD.run_sql(sql)
+
+        run_sql(sql)
 
         tags = ['Japanese', 'English', 'German', 'Spanish', 'French']
         table = 'anime'
         key_anime = anime['Name']
         sql = update_querry(anime['Titles'], tags, table, key_anime, True)
-        print(f"{cont}: {sql}")
-        BD.run_sql(sql)
+
+        run_sql(sql)
 
     except Exception as excep:
         # Send the main error output to a file
         with open('log_anime.out', 'a') as log:
             log.write(f'{excep}')
             log.close
-    
+        
 
 """ Explanation of try except pass quantity
 
@@ -181,7 +235,7 @@ PYTHÔNICO
 
 
 # SQL commands for user data
-# execute SQL command according to data passed by parameters
+# Execute SQL command according to data passed by parameters
 cont = 0
 for user in BD_USER.find({},{'_id': 0}):
     try: 
@@ -190,14 +244,15 @@ for user in BD_USER.find({},{'_id': 0}):
         tags = ['Name', 'Last Online', 'Gender', 'Birthday', 'Location', 'Joined']
         table = 'user_info'
         sql = constructor_querry(user, tags, table)
-        BD.run_sql(sql)
-        print(f"{cont}: {sql}")
-    
+        run_sql(str(sql))
+
         try:
             for anime in user['Anime_list']:
                 try:
-                    sql = f"INSERT INTO anime_view (name_user, name_anime) VALUES('{user['Name']}','{anime}');"
-                    BD.run_sql(sql)
+                    table_sql = Table('anime_view')
+                    sql = Query.into(table_sql).columns('name_user', 'name_anime').insert(user['Name'], anime)
+            
+                    run_sql(str(sql))
                 except:
                     pass       
         except:
@@ -206,10 +261,13 @@ for user in BD_USER.find({},{'_id': 0}):
         try:
             for friend in user['Friends']:
                 try:
-                    sql = f"INSERT INTO friendship (name_user, name_friend) VALUES('{user['Name']}','{friend}');"
-                    BD.run_sql(sql)
+                    table_sql = Table('friendship')
+                    sql = Query.into(table_sql).columns('name_user', 'name_friend').insert(user['Name'], friend)
+            
+                    run_sql(str(sql))
                 except:
                     pass
+
         except:
             pass
     
