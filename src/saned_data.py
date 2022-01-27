@@ -24,7 +24,7 @@ DB_PASS = os.getenv('POSTGRES_PASSWORD')
 
 def conection():
     """
-    create conection with data base Postgres
+    Create conection with data base Postgres
     """
     conection = psycopg2.connect(dbname=DB_NAME,
                                  user=DB_USER_P, 
@@ -46,7 +46,7 @@ def run_sql(sql):
 
 def constructor_querry(entry, tags, table):
     """ 
-    creates a custom query for each set of information
+    Creates a custom query for each set of information
     """
     array_choose = []
     for tag in tags:
@@ -107,7 +107,7 @@ def update_querry(entry, tags, table, key_anime, char=False):
 
 
 try:
-    # creates the table with user information, if it does not exist
+    # Creates the table with user information, if it does not exist
     sql = Query.create_table("user_info").columns(
             Column("name", "VARCHAR", nullable=False),
             Column("gender", "VARCHAR", nullable=True),
@@ -122,7 +122,7 @@ except:
 
 
 try:
-    # creates the table with anime information, if it does not exist
+    # Creates the table with anime information, if it does not exist
     sql = Query.create_table("anime").columns(
             Column("name", "VARCHAR", nullable=False),
             Column("synonyms", "VARCHAR", nullable=True),
@@ -156,7 +156,7 @@ except:
 
 
 try:
-    # creates the table with user friends, if it does not exist
+    # Creates the table with user friends, if it does not exist
     sql = Query.create_table("friendship").columns(
             Column("id", "SERIAL", nullable=False),
             Column("name_user", "VARCHAR", nullable=False),
@@ -167,13 +167,13 @@ except:
     pass
 
 try:
-    # creates the table with user anime information, if it does not exist
+    # Creates the table with user anime information, if it does not exist
     sql = Query.create_table("anime_view").columns(
             Column("id", "SERIAL", nullable=False),
             Column("name_user", "VARCHAR", nullable=False),
             Column("name_anime", "VARCHAR", nullable=False)) \
             .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
-    # remove the final parentheses, to be added when editing the string
+    # Remove the final parentheses, to be added when editing the string
     sql = str(sql).replace("))",")")
     sql = f'{sql}, FOREIGN KEY ("name_anime") REFERENCES "anime" ("name"))'
     run_sql(sql)
