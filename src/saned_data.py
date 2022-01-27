@@ -120,27 +120,6 @@ try:
 except:
     pass
 
-try:
-    # creates the table with user friends, if it does not exist
-    sql = Query.create_table("friendship").columns(
-            Column("id", "SERIAL", nullable=False),
-            Column("name_user", "VARCHAR", nullable=False),
-            Column("name_friend", "VARCHAR", nullable=False)) \
-            .primary_key("id")
-    run_sql(str(sql))
-except:
-    pass
-
-try:
-    # creates the table with user anime information, if it does not exist
-    sql = Query.create_table("anime_view").columns(
-            Column("id", "SERIAL", nullable=False),
-            Column("name_user", "VARCHAR", nullable=False),
-            Column("name_anime", "VARCHAR", nullable=False)) \
-            .primary_key("id")
-    run_sql(str(sql))
-except:
-    pass
 
 try:
     # creates the table with anime information, if it does not exist
@@ -172,6 +151,31 @@ try:
             Column("studios", "VARCHAR", nullable=True)) \
             .primary_key("name")
     run_sql(str(sql))
+except:
+    pass
+
+
+try:
+    # creates the table with user friends, if it does not exist
+    sql = Query.create_table("friendship").columns(
+            Column("id", "SERIAL", nullable=False),
+            Column("name_user", "VARCHAR", nullable=False),
+            Column("name_friend", "VARCHAR", nullable=False)) \
+            .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
+    run_sql(str(sql))
+except:
+    pass
+
+try:
+    # creates the table with user anime information, if it does not exist
+    sql = Query.create_table("anime_view").columns(
+            Column("id", "SERIAL", nullable=False),
+            Column("name_user", "VARCHAR", nullable=False),
+            Column("name_anime", "VARCHAR", nullable=False)) \
+            .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
+    sql = str(sql).replace("))",")")
+    sql = f'{sql}, FOREIGN KEY ("name_anime") REFERENCES "anime" ("name"))'
+    run_sql(sql)
 except:
     pass
 
@@ -223,6 +227,8 @@ for anime in BD_ANIME.find({},{'_id': 0}):
         with open('log_anime.out', 'a') as log:
             log.write(f'{excep}')
             log.close
+    if cont == 100:
+        break
         
 
 """ Explanation of try except pass quantity
@@ -276,3 +282,6 @@ for user in BD_USER.find({},{'_id': 0}):
         with open('log_user.out', 'a') as log:
             log.write(f'{excep}')
             log.close
+    
+    if cont == 2:
+        break
