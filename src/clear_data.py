@@ -1,5 +1,6 @@
 import json_read_write
 
+
 def subsections(new_animes):
     # Create new subsections
     new_animes["Assessment"] = {}
@@ -9,6 +10,9 @@ def subsections(new_animes):
 
     def fors(tags_for_anime, tag):
         for tags in new_animes:
+            with open('tags.txt', 'a') as a:
+                a.write(tags + '\n')
+
             if tags in tags_for_anime:
                 new_animes[tag][tags] = new_animes[tags]
         # After relocating the tags, we have to delete them
@@ -30,7 +34,7 @@ def subsections(new_animes):
     return new_animes
 
 
-def saned_anime_data(file_names):
+def saned_anime_data(file_names, bd_anime):
     """ Cleaning anime data
     Open the json with the raw data and put it
     in a standard format
@@ -71,11 +75,11 @@ def saned_anime_data(file_names):
         
         # Adding subsections
         animes = subsections(new_animes)
+        # Saving anime data in the database
+        bd_anime.insert_one(animes).inserted_id
 
-        json_read_write.write_json(file, animes)
 
-
-def user_info(info, user, animes, friends):
+def user_info(info, user, animes, friends, bd_user):
     """Merge user information
     """
     data_user = {}
@@ -91,6 +95,4 @@ def user_info(info, user, animes, friends):
     for anime in animes:
         data_user["Anime_list"].append(anime[0])
 
-    file_name = f'output/user/{user}.json'
-    json_read_write.write_json(file_name, data_user)
-    return file_name
+    bd_user.insert_one(data_user).inserted_id

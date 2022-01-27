@@ -4,3 +4,7 @@ chromedriver
 output
 __pycache__
 .env
+instagram
+tags*
+log*
+coment*

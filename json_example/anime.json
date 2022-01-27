@@ -11,6 +11,7 @@
     "Rating": "R - 17+ (violence & profanity)",
     "Members": 1503439,
     "Favorites": 68184,
+    
     "Assessment": {
         "Score": 8.91,
         "Ranked": 18,
@@ -30,7 +31,11 @@
         "Studios": "Sunrise"
     },
     "Style": {
-        "Genres": "Action",
-        "Themes": "Mecha"
+        "Genres": [
+            "Action"
+        ],
+        "Themes": [
+            "Mecha"
+        ]
     }
 }
