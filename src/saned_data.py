@@ -173,6 +173,7 @@ try:
             Column("name_user", "VARCHAR", nullable=False),
             Column("name_anime", "VARCHAR", nullable=False)) \
             .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
+    # remove the final parentheses, to be added when editing the string
     sql = str(sql).replace("))",")")
     sql = f'{sql}, FOREIGN KEY ("name_anime") REFERENCES "anime" ("name"))'
     run_sql(sql)
