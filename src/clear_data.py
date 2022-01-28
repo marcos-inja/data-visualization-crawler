@@ -79,7 +79,7 @@ def saned_anime_data(file_names, bd_anime):
         bd_anime.insert_one(animes).inserted_id
 
 
-def user_info(info, user, animes, friends, bd_user):
+def user_info(info, user, animes, friends, favorites, bd_user):
     """Merge user information
     """
     data_user = {}
@@ -90,6 +90,7 @@ def user_info(info, user, animes, friends, bd_user):
     # Put the name of all friends in the Friends array
     data_user["Friends"] = friends
 
+    data_user["Favorites"] = favorites
     # Put the name of all anime in the Anime_list in the array
     data_user["Anime_list"] = []
     for anime in animes:

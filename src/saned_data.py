@@ -174,7 +174,8 @@ try:
     sql = Query.create_table("anime_view").columns(
             Column("id", "SERIAL", nullable=False),
             Column("name_user", "VARCHAR", nullable=False),
-            Column("name_anime", "VARCHAR", nullable=False)) \
+            Column("name_anime", "VARCHAR", nullable=False),
+            Column("favorite", "BOOLEAN", nullable=False)) \
             .primary_key("id").foreign_key(["name_user"],Table("user_info"), ["name"])
     # Remove the final parentheses, to be added when editing the string
     sql = str(sql).replace("))",")")
@@ -236,7 +237,7 @@ for anime in BD_ANIME.find({},{'_id': 0}):
 Excessive use of try except pass is seen as bad practice,
 but here we are in python, this is python's ninja way of being.
 PYTHÔNICO 
-                    ~Jamal Marcos Vespestino da Tarde, 2022.
+                    ~Jamal Marcos Vespertino da Tarde, 2022.
 """
 
 
@@ -254,11 +255,20 @@ for user in BD_USER.find({},{'_id': 0}):
             for anime in user['Anime_list']:
                 try:
                     table_sql = Table('anime_view')
-                    sql = Query.into(table_sql).columns('name_user', 'name_anime').insert(user['Name'], anime)
-            
-                    run_sql(str(sql))
+                    fav = False
+                    # Picking up favorite animes
+                    for favorite in user['Favorites']:
+                        if favorite == anime:
+                            fav = True
+
+                        if fav == True:                
+                            sql = Query.into(table_sql).columns('name_user', 'name_anime', 'favorite').insert(user['Name'], anime, fav)
+                            run_sql(str(sql))    
+
+                    sql = Query.into(table_sql).columns('name_user', 'name_anime', 'favorite').insert(user['Name'], anime, fav)
+                    run_sql(str(sql))    
                 except:
-                    pass       
+                    pass 
         except:
             pass
 
