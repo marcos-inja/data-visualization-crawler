@@ -41,6 +41,7 @@ pathlib.Path('output').mkdir(exist_ok=True)
 pathlib.Path('output/anime').mkdir(exist_ok=True)
 pathlib.Path('output/user').mkdir(exist_ok=True)
 
+
 # Get the user's main page,
 # the friends page and the anime page
 def url_format(url_part_name, opc):
@@ -49,6 +50,7 @@ def url_format(url_part_name, opc):
     1 - frind
     2 - anime
     3 - anime info
+    4 - favorites
     """
     url_format = ''
     if opc == 0:
@@ -57,8 +59,10 @@ def url_format(url_part_name, opc):
         url_format = f'{BASE_URL}/profile/{url_part_name}/friends'
     elif opc == 2:
         url_format = f'{BASE_URL}/animelist/{url_part_name}?status=7'
-    else:
+    elif opc == 3:
         url_format = f'{BASE_URL}/{url_part_name}'
+    else:
+        url_format = f'{BASE_URL}/profile/{url_part_name}/favorites'
     return url_format
 
 
@@ -99,10 +103,10 @@ def user_info(soup):
 
 
 # Get the user's friends
-def user_friends(soup):
+def user_friends_and_favorites(soup, tag):
     info = []
     try:
-        user_status = soup.find(class_ = 'friend').find_all(class_ = 'boxlist')
+        user_status = soup.find(class_ = tag).find_all(class_ = 'boxlist')
         for i in user_status:
             tag = i.find(class_ = 'title').find('a')
             name = tag.text
@@ -198,11 +202,14 @@ def friends_data(friends):
             # User friends
             soup = get_page_user_friend_anime(url_format(f, 1))
             friends = user_friends(soup)
+            # Get the favorites animes
+            soup = get_page_user_friend_anime(url_format(f, 4))
+            favorites = get_favorites(soup)
             # Get the anime information
             anime = user_anime(url_format(f, 2))
             file_names = anime_data(anime)
             # Joining and saving user information in the database
-            clear_data.user_info(infos_user, f, anime, friends, BD_USER)
+            clear_data.user_info(infos_user, f, anime, friends, favorites, BD_USER)
 
 
 def main(user):
@@ -212,14 +219,18 @@ def main(user):
 
     # User friends
     soup = get_page_user_friend_anime(url_format(user, 1))
-    friends = user_friends(soup)
+    friends = user_friends_and_favorites(soup, 'friend')
+
+    # Get the favorites animes
+    soup = get_page_user_friend_anime(url_format(user, 4))
+    favorites = user_friends_and_favorites(soup, 'anime')
 
     # Get the anime information
     anime = user_anime(url_format(user, 2))
     file_names = anime_data(anime)
 
     # Joining and saving user information in the database
-    clear_data.user_info(infos_user, user, anime, friends, BD_USER)
+    clear_data.user_info(infos_user, user, anime, friends, favorites, BD_USER)
 
     # Data friends of friends
     friends_data(friends) 
