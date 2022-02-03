@@ -201,10 +201,10 @@ def friends_data(friends):
             infos_user = user_info(soup)
             # User friends
             soup = get_page_user_friend_anime(url_format(f, 1))
-            friends = user_friends(soup)
+            friends = user_friends_and_favorites(soup, 'friend')
             # Get the favorites animes
             soup = get_page_user_friend_anime(url_format(f, 4))
-            favorites = get_favorites(soup)
+            favorites = user_friends_and_favorites(soup, 'anime')
             # Get the anime information
             anime = user_anime(url_format(f, 2))
             file_names = anime_data(anime)

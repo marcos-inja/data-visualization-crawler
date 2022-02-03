@@ -54,7 +54,7 @@ def constructor_querry(entry, tags, table):
             array_choose.append({tag.lower().replace(" ", "_"): entry[tag]})
         except:
             pass
-    
+
     keys = ''
     value = ''
 
@@ -85,7 +85,7 @@ def update_querry(entry, tags, table, key_anime, char=False):
             array_choose.append({tag.lower().replace(" ", "_"): entry[tag]})
         except:
             pass
-    
+
     values = ''
     for list_tag in array_choose:
         for key in list_tag:
@@ -230,7 +230,7 @@ for anime in BD_ANIME.find({},{'_id': 0}):
         with open('log_anime.out', 'a') as log:
             log.write(f'{excep}')
             log.close
-        
+
 
 """ Explanation of try except pass quantity
 
